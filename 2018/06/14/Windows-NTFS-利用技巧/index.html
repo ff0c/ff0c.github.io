@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="内网技巧,NTFS," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="FF0C的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="满地都是六便士，他却抬头看见了月亮。  tip 1: 权限绕过建立文件夹(CVE-2018-1036 / NTFS EOP)在windows上可以为自己的文件夹建立一些特殊的权限，例如：允许用户在该文件夹下创建文件，但不允许创建文件夹。 这种文件的例子：c:\windows\tasks\  只要该文件夹允许用户创建文件，这个acl就可以绕过。将:: $ INDEX_ALLOCATION添加在文件名">
+<meta name="keywords" content="内网技巧,NTFS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows NTFS 利用技巧">
+<meta property="og:url" content="http://yoursite.com/2018/06/14/Windows-NTFS-利用技巧/index.html">
+<meta property="og:site_name" content="FF0C的博客">
+<meta property="og:description" content="满地都是六便士，他却抬头看见了月亮。  tip 1: 权限绕过建立文件夹(CVE-2018-1036 / NTFS EOP)在windows上可以为自己的文件夹建立一些特殊的权限，例如：允许用户在该文件夹下创建文件，但不允许创建文件夹。 这种文件的例子：c:\windows\tasks\  只要该文件夹允许用户创建文件，这个acl就可以绕过。将:: $ INDEX_ALLOCATION添加在文件名">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/image-20180614165210177-9044235.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180614165607425-9044400.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615104012068-9045460.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615104725338-9045473.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615155733116.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615151030079.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615150325772.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615151538393.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180615160338515.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619105954854.png">
+<meta property="og:updated_time" content="2018-06-19T04:02:59.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Windows NTFS 利用技巧">
+<meta name="twitter:description" content="满地都是六便士，他却抬头看见了月亮。  tip 1: 权限绕过建立文件夹(CVE-2018-1036 / NTFS EOP)在windows上可以为自己的文件夹建立一些特殊的权限，例如：允许用户在该文件夹下创建文件，但不允许创建文件夹。 这种文件的例子：c:\windows\tasks\  只要该文件夹允许用户创建文件，这个acl就可以绕过。将:: $ INDEX_ALLOCATION添加在文件名">
+<meta name="twitter:image" content="http://yoursite.com/images/image-20180614165210177-9044235.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/14/Windows-NTFS-利用技巧/"/>
+
+
+
+
+
+  <title>Windows NTFS 利用技巧 | FF0C的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">FF0C的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/14/Windows-NTFS-利用技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FF0C">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="FF0C的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Windows NTFS 利用技巧</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-14T13:44:46+08:00">
+                2018-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/内网安全/" itemprop="url" rel="index">
+                    <span itemprop="name">内网安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center">满地都是六便士，<br>他却抬头看见了月亮。</blockquote>
+
+<h3 id="tip-1-权限绕过建立文件夹-CVE-2018-1036-NTFS-EOP"><a href="#tip-1-权限绕过建立文件夹-CVE-2018-1036-NTFS-EOP" class="headerlink" title="tip 1: 权限绕过建立文件夹(CVE-2018-1036 / NTFS EOP)"></a>tip 1: 权限绕过建立文件夹(<strong>CVE-2018-1036 / NTFS EOP</strong>)</h3><p>在windows上可以为自己的文件夹建立一些特殊的权限，例如：允许用户在该文件夹下创建文件，但不允许创建文件夹。</p>
+<p>这种文件的例子：<code>c:\windows\tasks\</code></p>
+<p><img src="/images/image-20180614165210177-9044235.png" alt="image-20180614165210177-9044235"></p>
+<p>只要该文件夹允许用户创建文件，这个acl就可以绕过。将<code>:: $ INDEX_ALLOCATION</code>添加在文件名的末尾，这时候创建的就不是一个文件了，而是文件夹。</p>
+<p><img src="/images/image-20180614165607425-9044400.png" alt="image-20180614165607425-9044400"></p>
+<p>注：如果该路径下，只允许删除文件，同样的，将<code>:: $ INDEX_ALLOCATION</code>的技巧也可以删除目录。</p>
+<h3 id="tips-2-用备用数据流绕过路径限制"><a href="#tips-2-用备用数据流绕过路径限制" class="headerlink" title="tips 2: 用备用数据流绕过路径限制"></a>tips 2: 用备用数据流绕过路径限制</h3><p>没成功。</p>
+<h3 id="tip-3-使用”…”文件夹创建无找到的文件"><a href="#tip-3-使用”…”文件夹创建无找到的文件" class="headerlink" title="tip 3: 使用”…”文件夹创建无找到的文件"></a>tip 3: 使用”…”文件夹创建无找到的文件</h3><p>每个文件都包含两个默认的特殊文件夹，即’.’和’…’目录，它们都指向父目录。<img src="/images/image-20180615104012068-9045460.png" alt="image-20180615104012068-9045460"></p>
+<p>这位博主<a href="https://www.sec-consult.com" target="_blank" rel="noopener">sec-consult</a>说是用tips1的方法，可以添加，但是自己试了以后发现，不用这一步骤，也同样可以生成<code>…</code>文件。</p>
+<p><img src="/images/image-20180615104725338-9045473.png" alt="image-20180615104725338-9045473"></p>
+<p>当然这种文件进入的方式也有些不太一样</p>
+<p><img src="/images/image-20180615155733116.png" alt="image-20180615155733116"></p>
+<p>会发现在这个文件夹下的文件无法正常被打开。提示找不到该文件</p>
+<p>使用powershell查找发现也无法查询。（<code>Get-ChildItem -Path C:\test -Filter 123.txt -Recurse -ErrorAction SilentlyContinue -Force</code>）</p>
+<p><img src="/images/image-20180615151030079.png" alt="image-20180615151030079"></p>
+<p><img src="/images/image-20180615150325772.png" alt="image-20180615150325772"></p>
+<p>有趣的是，你在命令行下，…目录中却可以正常查看文件内容。</p>
+<p><img src="/images/image-20180615151538393.png" alt="image-20180615151538393"></p>
+<h3 id="tips-4-‘…’目录链接"><a href="#tips-4-‘…’目录链接" class="headerlink" title="tips 4: ‘…’目录链接"></a>tips 4: ‘…’目录链接</h3><p>目录链接是一个非常有用的NTFS功能，使用它可以创建到目标文件夹的符号链接。</p>
+<p>但是使用文章中的方式在测试发现并不能执行。（server08、server12下均不能使用）</p>
+<p><img src="/images/image-20180615160338515.png" alt="image-20180615160338515"></p>
+<p>创建 “. .”目录</p>
+<p><strong><em> echo 123 &gt; “. .::$index_allocation” </em></strong></p>
+<p>两”.”之前有一个空格，进入目录带引号。</p>
+<p><img src="/images/image-20180619105954854.png" alt="image-20180619105954854"></p>
+<h3 id="原文"><a href="#原文" class="headerlink" title="原文"></a>原文</h3><ul>
+<li><a href="https://www.sec-consult.com/en/blog/2018/06/pentesters-windows-ntfs-tricks-collection/" target="_blank" rel="noopener">https://www.sec-consult.com/en/blog/2018/06/pentesters-windows-ntfs-tricks-collection/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paper-plane" aria-hidden="true"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/内网技巧/" rel="tag"><i class="fa fa-tag"></i> 内网技巧</a>
+          
+            <a href="/tags/NTFS/" rel="tag"><i class="fa fa-tag"></i> NTFS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/11/openvz-bbr-shadowsocks/" rel="next" title="openvz-bbr-shadowsocks">
+                <i class="fa fa-chevron-left"></i> openvz-bbr-shadowsocks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/15/hexo配置tips/" rel="prev" title="hexo配置tips">
+                hexo配置tips <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">FF0C</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#tip-1-权限绕过建立文件夹-CVE-2018-1036-NTFS-EOP"><span class="nav-number">1.</span> <span class="nav-text">tip 1: 权限绕过建立文件夹(CVE-2018-1036 / NTFS EOP)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tips-2-用备用数据流绕过路径限制"><span class="nav-number">2.</span> <span class="nav-text">tips 2: 用备用数据流绕过路径限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tip-3-使用”…”文件夹创建无找到的文件"><span class="nav-number">3.</span> <span class="nav-text">tip 3: 使用”…”文件夹创建无找到的文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tips-4-‘…’目录链接"><span class="nav-number">4.</span> <span class="nav-text">tips 4: ‘…’目录链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原文"><span class="nav-number">5.</span> <span class="nav-text">原文</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FF0C</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'C13uDzWh5eF9O1NAnp0rVgf5-gzGzoHsz',
+        appKey: 'bgwPVXSotMkp53yI70NXERHG',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

